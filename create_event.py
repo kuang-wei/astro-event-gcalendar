@@ -54,6 +54,32 @@ def get_credentials():
         print('Storing credentials to ' + credential_path)
     return credentials
 
+def duplicate_check(allevents):
+    """
+    input allevents, this function gives us
+    back a list that contains which specific
+    event has been added to the calendar
+
+    It's checked by matching the time and title
+    """
+    matchedlist = list()
+    for i in range(len(allevents)):
+        tstart = allevents[i]['start']['dateTime']
+        tstart_d = datetime.datetime.strptime(tstart, "%Y-%m-%dT%H:%M:%S")
+        tstart_d = tstart_d+datetime.timedelta(hours=6) #converting to UTC
+        tstart = tstart_d.isoformat()
+        pulledtitle = allevents[i]['summary']
+        eventsResult = service.events().list(
+            calendarId='primary', timeMin=tstart+'Z', maxResults=1, singleEvents=True, #Z indicates UTC
+            orderBy='startTime').execute()
+        events = eventsResult.get('items', [])
+        currenttitle = events[0]['summary']
+        if currenttitle == pulledtitle:
+            matchedlist.append(False)
+        else:
+            matchedlist.append(True)
+    return matchedlist
+
 links, ids, titles, dates = sa.preprcessing()
 all_time_details = sa.talk_details(links, ids)
 allevents = sa.eventlist(all_time_details, titles)
@@ -62,8 +88,9 @@ credentials = get_credentials()
 http = credentials.authorize(httplib2.Http())
 service = discovery.build('calendar', 'v3', http=http)
 
-for i in range(len(allevents)):
-	event = service.events().insert(calendarId='primary', body=allevents[i]).execute()
-	print ('Event created: %s'% (event.get('htmlLink')))
-	print('')
-	print('____________________________________________________')
+# for i in range(len(allevents)):
+# 	event = service.events().insert(calendarId='primary', body=allevents[i]).execute()
+# 	print ('Event created: %s'% (event.get('htmlLink')))
+# 	print('')
+# 	print('____________________________________________________')
+
