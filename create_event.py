@@ -60,7 +60,11 @@ def duplicate_check(allevents):
     back a list that contains which specific
     event has been added to the calendar
 
-    It's checked by matching the time and title
+    It's checked by matching the time and location
+
+    In the output matchedlist, False corresponds to
+    events that can just be updated. True corresponds
+    to events that need to be newly added 
     """
     matchedlist = list()
     for i in range(len(allevents)):
@@ -68,18 +72,19 @@ def duplicate_check(allevents):
         tstart_d = datetime.datetime.strptime(tstart, "%Y-%m-%dT%H:%M:%S")
         tstart_d = tstart_d+datetime.timedelta(hours=6) #converting to UTC
         tstart = tstart_d.isoformat()
-        pulledtitle = allevents[i]['summary']
+        pulledlocation = allevents[i]['location']
         eventsResult = service.events().list(
             calendarId='primary', timeMin=tstart+'Z', maxResults=1, singleEvents=True, #Z indicates UTC
             orderBy='startTime').execute()
         events = eventsResult.get('items', [])
-        currenttitle = events[0]['summary']
-        if currenttitle == pulledtitle:
+        currentlocation = events[0]['location']
+        if currentlocation == pulledlocation:
             matchedlist.append(False)
         else:
             matchedlist.append(True)
     return matchedlist
 
+#Scrape events
 links, ids, titles, dates = sa.preprcessing()
 all_time_details = sa.talk_details(links, ids)
 allevents = sa.eventlist(all_time_details, titles)
@@ -88,9 +93,39 @@ credentials = get_credentials()
 http = credentials.authorize(httplib2.Http())
 service = discovery.build('calendar', 'v3', http=http)
 
-# for i in range(len(allevents)):
-# 	event = service.events().insert(calendarId='primary', body=allevents[i]).execute()
-# 	print ('Event created: %s'% (event.get('htmlLink')))
-# 	print('')
-# 	print('____________________________________________________')
-
+for i in range(len(allevents)):
+    tstart = allevents[i]['start']['dateTime']
+    tstart_d = datetime.datetime.strptime(tstart, "%Y-%m-%dT%H:%M:%S")
+    tstart_d = tstart_d+datetime.timedelta(hours=6) #converting to UTC
+    tstart = tstart_d.isoformat()
+    pulledlocation = allevents[i]['location']
+    eventsResult = service.events().list(
+        calendarId='primary', timeMin=tstart+'Z', maxResults=1, singleEvents=True, #Z indicates UTC
+        orderBy='startTime').execute()
+    events = eventsResult.get('items', [])
+    currentlocation = events[0]['location']
+    if currentlocation == pulledlocation:
+        print('---------------')
+        print(allevents[i]['summary'])
+        print(allevents[i]['start']['dateTime'])
+        print(allevents[i]['location'])
+        events[0]['summary'] = allevents[i]['summary']
+        updated_event = service.events().update(calendarId='primary', eventId=events[0]['id'], body=events[0]).execute()
+        print()
+        print('existing event updated')
+        print('HTML link: %s'% (events[0].get('htmlLink')))
+        print('---------------')
+        print()
+        print()
+    else:
+        print('---------------')
+        print(allevents[i]['summary'])
+        print(allevents[i]['start']['dateTime'])
+        print(allevents[i]['location'])
+        event = service.events().insert(calendarId='primary', body=allevents[i]).execute()
+        print()
+        print('new event added')
+        print('HTML link: %s'% (event.get('htmlLink')))
+        print('---------------')
+        print()
+        print()
