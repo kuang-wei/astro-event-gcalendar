@@ -47,6 +47,8 @@ def get_details(links, ids, TalkIndex):
 	rIndividualTalk = requests.get(links[TalkIndex])
 	soupIndividualTalk = BeautifulSoup(rIndividualTalk.content, "lxml")
 	IndividualTalkPage = soupIndividualTalk.find_all("div", {"class":"paragraph_second"})
+	if len(IndividualTalkPage)==0:
+		IndividualTalkPage = soupIndividualTalk.find_all("div", {"class":"paragraph_third"})
 
 	for item in IndividualTalkPage:
 	    if item.find_all("a", {"name":ids[TalkIndex]}):
