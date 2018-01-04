@@ -29,7 +29,7 @@ git clone https://github.com/kuang-wei/astro-event-gcalendar.git
 4. Select the **Credentials** tab, click the **Create credentials** button and select **OAuth client ID**.
 5. Select the application type **Other**, enter the name "Google Calendar API Quickstart", and click the **Create** button.
 6. Click **OK** to dismiss the resulting dialog.
-7. Click the &#xe2c4 (Download JSON) button to the right of the client ID.
+7. Click (Download JSON) button to the right of the client ID.
 8. Move this file to the cloned repository and rename it `client_secret.json`.
 
 #### Step 2: Install the Google Client Library
