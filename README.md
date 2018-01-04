@@ -1,8 +1,8 @@
 # astro-event-gcalendar
 
-This python program scrapes adds all [seminars/colloquia](http://astro.uchicago.edu/events/index.php) of UChicago's [Department of Astronomy & Astrophysics](http://astro.uchicago.edu) to your Google Calendar
+This python program adds all upcoming [seminars/colloquia](http://astro.uchicago.edu/events/index.php) scheduled by the [Department of Astronomy & Astrophysics](http://astro.uchicago.edu) at the University of Chicago to your Google Calendar
 
-Talk titles, dates, times, and room locations will all be automatically added
+Talk titles, dates, times, and room locations are all be automatically added
 
 ## Getting Started
 
