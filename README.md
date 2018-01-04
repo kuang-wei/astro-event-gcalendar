@@ -30,7 +30,7 @@ git clone https://github.com/kuang-wei/astro-event-gcalendar.git
 5. Select the application type **Other**, enter the name "Google Calendar API Quickstart", and click the **Create** button.
 6. Click **OK** to dismiss the resulting dialog.
 7. Click the &#xe2c4 (Download JSON) button to the right of the client ID.
-8. Move this file to the cloned repository and rename it > client_secret.json.
+8. Move this file to the cloned repository and rename it `client_secret.json`.
 
 #### Step 2: Install the Google Client Library
 Run the following command to install the library using pip:
@@ -47,6 +47,7 @@ python create_event.py
 ```
 As the program is adding events to your calendar, it will print out the details of the events in the following format:
 
+```
 ------------------
 TITLE
 DATE-TIME
@@ -54,6 +55,7 @@ LOCATION
 new event added/exisiting event updated
 CALENDAR EVENT URL
 ------------------
+```
 
 ## Authors
 
