@@ -97,9 +97,13 @@ credentials = get_credentials()
 http = credentials.authorize(httplib2.Http())
 service = discovery.build('calendar', 'v3', http=http)
 
-#clear the terminal
-for i in range(5):
-    print()
+#Print current date and time
+print()
+print()
+print("Current date and time:")
+print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
+print()
+print()
 
 for i in range(len(allevents)):
     tstart = allevents[i]['start']['dateTime']
