@@ -59,10 +59,10 @@ CALENDAR EVENT URL
 
 ## Authors
 
-* **Kuang Wei** - <kuangwei@uchicago.com>
+* **Kuang Wei** - <kuangwei@uchicago.edu>
 
 ## Acknowledgments
 
-* User guide of Google Calendar API
+* User guide of the Google Calendar API
 * Experienced developers on Stack Exchange
-* README template initially developed by Billie Thompson - [PurpleBooth](https://github.com/PurpleBooth)
+* Billie Thompson - [PurpleBooth](https://github.com/PurpleBooth) for the README template
