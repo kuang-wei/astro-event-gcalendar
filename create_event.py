@@ -56,6 +56,10 @@ def get_credentials():
 
 def duplicate_check(allevents):
     """
+    THIS FUNCTION FAILS IF THERE IS ANY
+    ALL DAY EVENT ON THE SAME DAY AS THE
+    TALK
+
     input allevents, this function gives us
     back a list that contains which specific
     event has been added to the calendar
@@ -93,6 +97,10 @@ credentials = get_credentials()
 http = credentials.authorize(httplib2.Http())
 service = discovery.build('calendar', 'v3', http=http)
 
+#clear the terminal
+for i in range(5):
+    print()
+
 for i in range(len(allevents)):
     tstart = allevents[i]['start']['dateTime']
     tstart_d = datetime.datetime.strptime(tstart, "%Y-%m-%dT%H:%M:%S")
@@ -100,32 +108,38 @@ for i in range(len(allevents)):
     tstart = tstart_d.isoformat()
     pulledlocation = allevents[i]['location']
     eventsResult = service.events().list(
-        calendarId='primary', timeMin=tstart+'Z', maxResults=1, singleEvents=True, #Z indicates UTC
+        calendarId='primary', timeMin=tstart+'Z', maxResults=10, singleEvents=True, #Z indicates UTC
         orderBy='startTime').execute()
     events = eventsResult.get('items', [])
-    currentlocation = events[0]['location']
-    if currentlocation == pulledlocation:
-        print('---------------')
-        print(allevents[i]['summary'])
-        print(allevents[i]['start']['dateTime'])
-        print(allevents[i]['location'])
-        events[0]['summary'] = allevents[i]['summary']
-        updated_event = service.events().update(calendarId='primary', eventId=events[0]['id'], body=events[0]).execute()
-        print()
-        print('existing event updated')
-        print('HTML link: %s'% (events[0].get('htmlLink')))
-        print('---------------')
-        print()
-        print()
-    else:
-        print('---------------')
-        print(allevents[i]['summary'])
-        print(allevents[i]['start']['dateTime'])
-        print(allevents[i]['location'])
-        event = service.events().insert(calendarId='primary', body=allevents[i]).execute()
-        print()
-        print('new event added')
-        print('HTML link: %s'% (event.get('htmlLink')))
-        print('---------------')
-        print()
-        print()
+    for event in events:
+        try:
+            len(event['end']['dateTime'])  #All day event doesn't have this field, so we go to except case
+            currentlocation = event['location']
+            if currentlocation == pulledlocation:
+                print('------------------')
+                print(allevents[i]['summary'])
+                print(allevents[i]['start']['dateTime'])
+                print(allevents[i]['location'])
+                event['summary'] = allevents[i]['summary']
+                updated_event = service.events().update(calendarId='primary', eventId=event['id'], body=event).execute()
+                print()
+                print('existing event updated')
+                print('HTML link: %s'% (event.get('htmlLink')))
+                print('------------------')
+                print()
+                print()
+            else:
+                print('------------------')
+                print(allevents[i]['summary'])
+                print(allevents[i]['start']['dateTime'])
+                print(allevents[i]['location'])
+                newevent = service.events().insert(calendarId='primary', body=allevents[i]).execute()
+                print()
+                print('new event added')
+                print('HTML link: %s'% (newevent.get('htmlLink')))
+                print('------------------')
+                print()
+                print()
+            break #stop going through events because there is not a single all day event in events
+        except:
+            pass #go to the next event in events, so we can find the first event that isn't an all day event
