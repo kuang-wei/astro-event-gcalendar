@@ -118,7 +118,10 @@ for i in range(len(allevents)):
     for event in events:
         try:
             len(event['end']['dateTime'])  #All day event doesn't have this field, so we go to except case
-            currentlocation = event['location']
+            try: #in case there are no events in the near future that has location tag
+                currentlocation = event['location']
+            except:
+                currentlocation = ''
             if currentlocation == pulledlocation:
                 print('------------------')
                 print(allevents[i]['summary'])

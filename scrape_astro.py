@@ -40,26 +40,31 @@ def preprcessing():
 	return links, ids, titles, dates
 
 def get_details(links, ids, TalkIndex):
-	"""
-	get_details gets all the time details of individual events into a list
-	the list is formatted as [date, location, time]
-	"""
-	rIndividualTalk = requests.get(links[TalkIndex])
-	soupIndividualTalk = BeautifulSoup(rIndividualTalk.content, "lxml")
-	IndividualTalkPage = soupIndividualTalk.find_all("div", {"class":"paragraph_second"})
-	if len(IndividualTalkPage)==0:
-		IndividualTalkPage = soupIndividualTalk.find_all("div", {"class":"paragraph_third"})
+    """
+    get_details gets all the time details of individual events into a list
+    the list is formatted as [date, location, time]
+    """
+    rIndividualTalk = requests.get(links[TalkIndex])
+    soupIndividualTalk = BeautifulSoup(rIndividualTalk.content, "lxml")
+    IndividualTalkPage = soupIndividualTalk.find_all("div", {"class":"paragraph_second"})
+    if len(IndividualTalkPage)==0:
+        IndividualTalkPage = soupIndividualTalk.find_all("div", {"class":"paragraph_third"})
 
-	for item in IndividualTalkPage:
-	    if item.find_all("a", {"name":ids[TalkIndex]}):
-	    	talkdate = item.find("b").text
-	try:
-		time_details = talkdate.split("|")
-		time_details = [x.strip(' ') for x in time_details]
-	except:
-		time_details = []
-
-	return time_details
+    for item in IndividualTalkPage:
+        if item.find_all("a", {"name":ids[TalkIndex]}):
+            if item.find("div", {"class":"paragraph_third-comments"}):
+                talkdate = item.find("div", {"class":"paragraph_third-comments"}).text
+            elif item.find("div", {"class":"paragraph_second-comments"}):
+                talkdate = item.find("div", {"class":"paragraph_second-comments"}).text
+            else:
+                talkdate = "|||"
+    try:
+        time_details = talkdate.split("|")
+        time_details = [x.strip(' ') for x in time_details]
+    except:
+        time_details = []
+    
+    return time_details
 
 def talk_details(links, ids):
 	"""
